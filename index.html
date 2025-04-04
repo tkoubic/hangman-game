@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="words.js" defer></script>
+    <script src="scripts.js" defer></script>
+    <title>Hangman v1.0</title>
+</head>
+
+<body class="grid place-items-center  bg-slate-800 w-[1000px] mx-auto">
+    <header class=" text-center">
+        <h1 class="text-4xl text-white font-bold my-5">Enjoy playing HANGMAN!</h1>
+    </header>
+
+    <section class="text-xl font-bold  grid grid-cols-1 md:grid-cols-2  items-center  bg-slate-200 p-5  w-[calc(100%-10rem)]">
+
+        <div class="py-5 border-2 mx-auto">
+            <img class=" h-[500px] shadow-lg" src="/assets/hangman07.jpg" alt="hangman07">
+        </div>
+
+        <!-- TEXTS AND HINTS -->
+        <div class=" shadow-lg p-8 bg-slate-200">
+            <div class="category-selection mb-5">
+                <h3 class="text-lg font-normal mb-2">Select Category:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="category-btn px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" data-category="animals">Animals</button>
+                    <button class="category-btn px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600" data-category="food">Food</button>
+                    <button class="category-btn px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600" data-category="objects">Objects</button>
+                    <button class="category-btn px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600" data-category="nature">Nature</button>
+                    <button class="category-btn px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600" data-category="other">Other</button>
+                </div>
+            </div>
+
+            <ul class="display-words flex list-none gap-5 flex-wrap">
+                <!-- Word letters will appear here -->
+            </ul>
+
+            <div class="my-5">
+                <h3 class="text-lg font-normal">Hint: </h3>
+                <h2 class="hint-text text-base font-light"></h2>
+            </div>
+
+            <div class="game-status my-5 hidden">
+                <div class="text-center p-3 rounded mb-3"></div>
+                <button class="restart-btn px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">Play Again</button>
+            </div>
+
+            <div class="">
+                <h3 class="lifes text-lg font-normal my-5">Lives: <b>6 / 6</b> </h3>
+            </div>
+
+            <div id="keys" class="keys grid grid-cols-6 gap-1">
+                <!-- Keyboard buttons will appear here -->
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

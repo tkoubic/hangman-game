@@ -1,0 +1,16 @@
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+#keys > button {
+    padding: 6px;
+    
+}
+
+.keys button[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+}
