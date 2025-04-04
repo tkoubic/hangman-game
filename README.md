@@ -25,7 +25,7 @@ Jednoduchá hra Hangman vytvořená v JavaScriptu, HTML a CSS s využitím Tailw
 
 ## Autor
 
-[Vaše jméno]
+Koubic
 
 ## Licence
 
