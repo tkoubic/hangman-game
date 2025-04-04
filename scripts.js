@@ -29,7 +29,7 @@ function initializeGame() {
     document.querySelector(".hint-text").innerText = "Select a category to start";
 
     // Set initial hangman image (full lives)
-    hangmanImage.src = "/assets/hangman07.jpg";
+    hangmanImage.src = "assets/hangman07.jpg";
     hangmanImage.alt = "hangman07";
 
     // Reset game variables
@@ -95,7 +95,7 @@ function startGame(category) {
     livesElement.innerText = `${livesRemaining} / ${maxLives}`;
 
     // Reset hangman image
-    hangmanImage.src = "/assets/hangman07.jpg";
+    hangmanImage.src = "assets/hangman07.jpg";
     hangmanImage.alt = "hangman07";
 
     // Hide game status
@@ -149,7 +149,7 @@ function handleLetterGuess(button, clickedLetter) {
 
         // Update hangman image
         const imageNumber = livesRemaining + 1; // Images are numbered 1-7
-        hangmanImage.src = `/assets/hangman0${imageNumber}.jpg`;
+        hangmanImage.src = `assets/hangman0${imageNumber}.jpg`;
         hangmanImage.alt = `hangman0${imageNumber}`;
 
         // Check if player lost
