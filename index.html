@@ -1,65 +1,124 @@
 <!DOCTYPE html>
 <html lang="cs">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./output.css" />
 
     <script src="words.js" defer></script>
     <script src="scripts.js" defer></script>
-    <title>Hangman v1.0</title>
-</head>
+    <title>Hangman a man who doesnt know</title>
+  </head>
 
-<body class="grid place-items-center  bg-slate-800 w-[1000px] mx-auto">
-    <header class=" text-center">
-        <h1 class="text-4xl text-white font-bold my-5">Enjoy playing HANGMAN!</h1>
-    </header>
+  <body class="min-h-screen bg-slate-800 flex justify-center items-center p-4">
+    <main class="w-full max-w-6xl">
+      <!-- Header -->
+      <header class="text-center mb-6">
+        <h1 class="text-4xl text-[#DDEB9D] font-bold">
+          Enjoy playing HANGMAN!
+        </h1>
+      </header>
 
-    <section class="text-xl font-bold  grid grid-cols-1 md:grid-cols-2  items-center  bg-slate-200 p-5  w-[calc(100%-10rem)]">
+      <!-- Game Container -->
+      <section class="bg-gradient-to-br from-slate-100 to-slate-300 rounded-xl shadow-2xl overflow-hidden">
+        <!-- Game Content -->
+        <div class="flex flex-col md:flex-row">
+          <!-- Left Column - Image -->
+          <div class="w-full md:w-1/2 p-6 flex justify-center items-center">
+            <div class="relative overflow-hidden rounded-lg border-4 border-[#143D60] transition-all duration-300 shadow-xl">
+              <img
+                class="h-[450px] object-cover"
+                src="assets/hangman07.jpg"
+                alt="hangman07"
+              />
+              
+            </div>
+          </div>
 
-        <div class="py-5 border-2 mx-auto">
-            <img class=" h-[500px] shadow-lg" src="assets/hangman07.jpg" alt="hangman07">
-        </div>
-
-        <!-- TEXTS AND HINTS -->
-        <div class=" shadow-lg p-8 bg-slate-200">
-            <div class="category-selection mb-5">
-                <h3 class="text-lg font-normal mb-2">Select Category:</h3>
-                <div class="flex flex-wrap gap-2">
-                    <button class="category-btn px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" data-category="animals">Animals</button>
-                    <button class="category-btn px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600" data-category="food">Food</button>
-                    <button class="category-btn px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600" data-category="objects">Objects</button>
-                    <button class="category-btn px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600" data-category="nature">Nature</button>
-                    <button class="category-btn px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600" data-category="other">Other</button>
+          <!-- Right Column - Game Controls -->
+          <div class="w-full md:w-1/2 p-6 flex flex-col justify-between gap-4">
+            <!-- Initial State - Category Selection -->
+            <div id="game-start" class="game-state active">
+              <div class="category-selection bg-[#143D60]/10 p-4 rounded-lg">
+                <h3 class="text-xl font-bold mb-3 text-white">Select Category:</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <button
+                    class="category-btn px-4 py-2 bg-[#143D60] text-[#DDEB9D] rounded-lg shadow-md transition-all duration-200 hover:shadow-lg hover:translate-y-[-2px] hover:bg-[#1a4f7e] focus:ring-2 focus:ring-[#DDEB9D]/50 focus:outline-none"
+                    data-category="animals"
+                  >
+                    🐾 Animals
+                  </button>
+                  <button
+                    class="category-btn px-4 py-2 bg-[#143D60] text-[#DDEB9D] rounded-lg shadow-md transition-all duration-200 hover:shadow-lg hover:translate-y-[-2px] hover:bg-[#1a4f7e] focus:ring-2 focus:ring-[#DDEB9D]/50 focus:outline-none"
+                    data-category="food"
+                  >
+                    🍔 Food
+                  </button>
+                  <button
+                    class="category-btn px-4 py-2 bg-[#143D60] text-[#DDEB9D] rounded-lg shadow-md transition-all duration-200 hover:shadow-lg hover:translate-y-[-2px] hover:bg-[#1a4f7e] focus:ring-2 focus:ring-[#DDEB9D]/50 focus:outline-none"
+                    data-category="objects"
+                  >
+                    🔧 Objects
+                  </button>
+                  <button
+                    class="category-btn px-4 py-2 bg-[#143D60] text-[#DDEB9D] rounded-lg shadow-md transition-all duration-200 hover:shadow-lg hover:translate-y-[-2px] hover:bg-[#1a4f7e] focus:ring-2 focus:ring-[#DDEB9D]/50 focus:outline-none"
+                    data-category="nature"
+                  >
+                    🌲 Nature
+                  </button>
+                  <button
+                    class="category-btn px-4 py-2 bg-[#143D60] text-[#DDEB9D] rounded-lg shadow-md transition-all duration-200 hover:shadow-lg hover:translate-y-[-2px] hover:bg-[#1a4f7e] focus:ring-2 focus:ring-[#DDEB9D]/50 focus:outline-none"
+                    data-category="other"
+                  >
+                    🎭 Other
+                  </button>
                 </div>
+              </div>
             </div>
 
-            <ul class="display-words flex list-none gap-5 flex-wrap">
-                <!-- Word letters will appear here -->
-            </ul>
+            <!-- Game Play State -->
+            <div id="game-play" class="game-state hidden flex flex-col gap-4">
+              <!-- Word Display -->
+              <div class="word-display bg-white/80 p-4 rounded-lg shadow-md">
+                <ul class="display-words flex justify-center list-none gap-3 flex-wrap">
+                  <!-- Word letters will appear here -->
+                </ul>
+              </div>
 
-            <div class="my-5">
-                <h3 class="text-lg font-normal">Hint: </h3>
-                <h2 class="hint-text text-base font-light"></h2>
+              <!-- Hint Section -->
+              <div class="hint-section bg-[#DDEB9D]/30 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-gray-400">Hint:</h3>
+                <h2 class="hint-text text-base italic text-gray-300"></h2>
+              </div>
+
+              <!-- Keyboard -->
+              <div class="keyboard-container bg-white/50 p-4 rounded-lg shadow-md flex-grow">
+                <div id="keys" class="keys grid grid-cols-7 sm:grid-cols-9 gap-2">
+                  <!-- Keyboard buttons will appear here -->
+                </div>
+              </div>
             </div>
 
-            <div class="game-status my-5 hidden">
-                <div class="text-center p-3 rounded mb-3"></div>
-                <button class="restart-btn px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">Play Again</button>
+            <!-- Game End State -->
+            <div id="game-end" class="game-state hidden">
+              <div class="game-status p-4">
+                <div class="text-center p-4 rounded-lg mb-3 shadow-inner"></div>
+                <button
+                  class="restart-btn px-6 py-3 bg-[#143D60] text-[#DDEB9D] rounded-lg shadow-md hover:bg-[#1a4f7e] hover:shadow-lg transition-all duration-200 w-full font-bold text-lg"
+                >
+                  Play Again
+                </button>
+              </div>
             </div>
-
-            <div class="">
-                <h3 class="lifes text-lg font-normal my-5">Lives: <b>6 / 6</b> </h3>
-            </div>
-
-            <div id="keys" class="keys grid grid-cols-6 gap-1">
-                <!-- Keyboard buttons will appear here -->
-            </div>
+          </div>
         </div>
-    </section>
+      </section>
 
-</body>
-
+      <!-- Footer -->
+      <footer class="text-center mt-6 text-white/70 text-sm">
+        <p>© 2025 Hangman Game | Created with ❤️</p>
+      </footer>
+    </main>
+  </body>
 </html>

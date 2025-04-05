@@ -1,12 +1,16 @@
 // DOM Elements
 const displayWords = document.querySelector(".display-words");
 const keyDiv = document.querySelector(".keys");
-const livesElement = document.querySelector(".lifes b");
+const livesElement = document.querySelector(".lifes span");
 const hangmanImage = document.querySelector("img");
 const categoryButtons = document.querySelectorAll(".category-btn");
-const gameStatusDiv = document.querySelector(".game-status");
 const gameStatusText = document.querySelector(".game-status div");
 const restartButton = document.querySelector(".restart-btn");
+
+// Game States
+const gameStartState = document.getElementById("game-start");
+const gamePlayState = document.getElementById("game-play");
+const gameEndState = document.getElementById("game-end");
 
 // Game variables
 let currentWord = "";
@@ -19,14 +23,13 @@ const maxLives = 6;
 
 // Initialize the game with category selection
 function initializeGame() {
-    // Hide game status and show category selection
-    gameStatusDiv.classList.add("hidden");
-    document.querySelector(".category-selection").classList.remove("hidden");
+    // Show start state, hide other states
+    showGameState("start");
 
-    // Reset keyboard
+    // Reset keyboard and word display
     keyDiv.innerHTML = "";
     displayWords.innerHTML = "";
-    document.querySelector(".hint-text").innerText = "Select a category to start";
+    document.querySelector(".hint-text").innerText = "";
 
     // Set initial hangman image (full lives)
     hangmanImage.src = "assets/hangman07.jpg";
@@ -37,6 +40,25 @@ function initializeGame() {
     correctLetters = [];
     gameInProgress = false;
     livesElement.innerText = `${livesRemaining} / ${maxLives}`;
+}
+
+// Helper function to show the correct game state
+function showGameState(state) {
+    // Hide all states first
+    gameStartState.classList.remove("active");
+    gameStartState.classList.add("hidden");
+    gamePlayState.classList.add("hidden");
+    gameEndState.classList.add("hidden");
+
+    // Show the requested state
+    if (state === "start") {
+        gameStartState.classList.remove("hidden");
+        gameStartState.classList.add("active");
+    } else if (state === "play") {
+        gamePlayState.classList.remove("hidden");
+    } else if (state === "end") {
+        gameEndState.classList.remove("hidden");
+    }
 }
 
 // Get a random word from the selected category (max 10 letters)
@@ -79,11 +101,11 @@ function startGame(category) {
 
     // Create word display
     displayWords.innerHTML = currentWord.split("").map(() =>
-        `<li class="w-8 h-8 border-b-2 border-black text-center text-2xl"></li>`
+        `<li class="w-10 h-12 border-b-3 border-[#143D60] text-center text-2xl font-bold flex items-end justify-center pb-1 mx-1 transition-all duration-300"></li>`
     ).join("");
 
-    // Hide category selection
-    document.querySelector(".category-selection").classList.add("hidden");
+    // Show game play state
+    showGameState("play");
 
     // Create keyboard
     createKeyboard();
@@ -97,9 +119,6 @@ function startGame(category) {
     // Reset hangman image
     hangmanImage.src = "assets/hangman07.jpg";
     hangmanImage.alt = "hangman07";
-
-    // Hide game status
-    gameStatusDiv.classList.add("hidden");
 }
 
 // Create keyboard buttons
@@ -112,8 +131,9 @@ function createKeyboard() {
 
         keyDiv.appendChild(btn);
         btn.classList.add(
-            "uppercase", "rounded-md", "text-2xl", "shadow-md",
-            "hover:bg-sky-400", "delay-100", "hover:animate-pulse", "p-1"
+            "uppercase", "rounded-lg", "text-xl", "font-semibold", "shadow-md",
+            "bg-[#143D60]/90", "text-[#DDEB9D]", "p-2", "transition-all", "duration-200",
+            "hover:bg-[#1a4f7e]", "hover:shadow-lg", "hover:scale-105", "focus:outline-none", "focus:ring-2", "focus:ring-[#DDEB9D]/50"
         );
         btn.addEventListener("click", e => handleLetterGuess(e.target, String.fromCharCode(i)));
     }
@@ -125,7 +145,7 @@ function handleLetterGuess(button, clickedLetter) {
 
     // Disable the button
     button.disabled = true;
-    button.classList.add("opacity-50");
+    button.classList.add("opacity-50", "cursor-not-allowed", "hover:scale-100", "hover:bg-[#143D60]/90");
 
     // Check if the letter is in the word
     if (currentWord.includes(clickedLetter)) {
@@ -133,9 +153,10 @@ function handleLetterGuess(button, clickedLetter) {
         [...currentWord].forEach((letter, index) => {
             if (letter === clickedLetter) {
                 correctLetters.push(letter);
-                displayWords.querySelectorAll("li")[index].innerText = letter;
-                displayWords.querySelectorAll("li")[index].classList.remove("border-b-2");
-                displayWords.querySelectorAll("li")[index].classList.add("uppercase");
+                const letterElement = displayWords.querySelectorAll("li")[index];
+                letterElement.innerText = letter;
+                letterElement.classList.remove("border-b-3");
+                letterElement.classList.add("uppercase", "bg-[#DDEB9D]/50", "rounded-md", "shadow-md", "transform", "scale-105", "text-[#143D60]");
             }
         });
 
@@ -166,24 +187,29 @@ function handleLetterGuess(button, clickedLetter) {
 function endGame(isWin) {
     gameInProgress = false;
 
-    // Show game status
-    gameStatusDiv.classList.remove("hidden");
+    // Show game end state
+    showGameState("end");
 
     if (isWin) {
-        gameStatusText.textContent = "Congratulations! You won! 🎉";
-        gameStatusText.classList.add("bg-green-200", "text-green-800");
-        gameStatusText.classList.remove("bg-red-200", "text-red-800");
+        gameStatusText.textContent = "🎉 Congratulations! You won! 🎉";
+        gameStatusText.classList.add("bg-[#DDEB9D]/70", "text-[#143D60]", "font-bold", "text-xl");
+        gameStatusText.classList.remove("bg-red-200/70", "text-red-800");
     } else {
-        gameStatusText.textContent = `Game Over! The word was "${currentWord}".`;
-        gameStatusText.classList.add("bg-red-200", "text-red-800");
-        gameStatusText.classList.remove("bg-green-200", "text-green-800");
+        gameStatusText.textContent = `😔 Game Over! The word was "${currentWord}".`;
+        gameStatusText.classList.add("bg-red-200/70", "text-red-800", "font-bold", "text-xl");
+        gameStatusText.classList.remove("bg-[#DDEB9D]/70", "text-[#143D60]");
 
         // Reveal the word
         [...currentWord].forEach((letter, index) => {
-            displayWords.querySelectorAll("li")[index].innerText = letter;
-            displayWords.querySelectorAll("li")[index].classList.add("uppercase");
+            const letterElement = displayWords.querySelectorAll("li")[index];
+            letterElement.innerText = letter;
+            letterElement.classList.remove("border-b-3");
+            letterElement.classList.add("uppercase");
+
             if (!correctLetters.includes(letter)) {
-                displayWords.querySelectorAll("li")[index].classList.add("text-red-500");
+                letterElement.classList.add("bg-red-200/70", "text-red-800", "rounded-md", "shadow-md", "transform", "scale-105");
+            } else {
+                letterElement.classList.add("bg-[#DDEB9D]/50", "rounded-md", "shadow-md", "transform", "scale-105", "text-[#143D60]");
             }
         });
     }
