@@ -6,8 +6,11 @@ const hangmanImage = document.querySelector("img");
 const categoryButtons = document.querySelectorAll(".category-btn");
 const gameStatusText = document.querySelector(".game-status div");
 const restartButton = document.querySelector(".restart-btn");
+const languageButtons = document.querySelectorAll(".language-btn");
+const backToLanguageButton = document.getElementById("back-to-language-btn");
 
 // Game States
+const languageSelectState = document.getElementById("language-select");
 const gameStartState = document.getElementById("game-start");
 const gamePlayState = document.getElementById("game-play");
 const gameEndState = document.getElementById("game-end");
@@ -21,10 +24,10 @@ let correctLetters = [];
 let gameInProgress = false;
 const maxLives = 6;
 
-// Initialize the game with category selection
+// Initialize the game with language selection
 function initializeGame() {
-    // Show start state, hide other states
-    showGameState("start");
+    // Show language selection state, hide other states
+    showGameState("language");
 
     // Reset keyboard and word display
     keyDiv.innerHTML = "";
@@ -40,18 +43,26 @@ function initializeGame() {
     correctLetters = [];
     gameInProgress = false;
     livesElement.innerText = `${livesRemaining} / ${maxLives}`;
+
+    // Initialize UI text based on default language
+    updateUIText();
 }
 
 // Helper function to show the correct game state
 function showGameState(state) {
     // Hide all states first
+    languageSelectState.classList.remove("active");
+    languageSelectState.classList.add("hidden");
     gameStartState.classList.remove("active");
     gameStartState.classList.add("hidden");
     gamePlayState.classList.add("hidden");
     gameEndState.classList.add("hidden");
 
     // Show the requested state
-    if (state === "start") {
+    if (state === "language") {
+        languageSelectState.classList.remove("hidden");
+        languageSelectState.classList.add("active");
+    } else if (state === "start") {
         gameStartState.classList.remove("hidden");
         gameStartState.classList.add("active");
     } else if (state === "play") {
@@ -76,6 +87,15 @@ function getRandomWord() {
     return filteredWords[randomIndex];
 }
 
+// Set the game language
+function setGameLanguage(lang) {
+    // Call the setLanguage function from words.js
+    setLanguage(lang);
+
+    // Show category selection screen
+    showGameState("start");
+}
+
 // Start the game with the selected category
 function startGame(category) {
     // Set the selected category and update word list
@@ -94,7 +114,7 @@ function startGame(category) {
     // Set current word and hint
     currentWord = wordData.word;
     currentHint = wordData.hint;
-    console.log(`Word: ${currentWord}, Category: ${selectedCategory}`);
+    console.log(`Word: ${currentWord}, Category: ${selectedCategory}, Language: ${currentLanguage}`);
 
     // Display hint
     document.querySelector(".hint-text").innerText = currentHint;
@@ -190,12 +210,14 @@ function endGame(isWin) {
     // Show game end state
     showGameState("end");
 
+    const uiText = gameData.ui[currentLanguage];
+
     if (isWin) {
-        gameStatusText.textContent = "🎉 Congratulations! You won! 🎉";
+        gameStatusText.textContent = uiText.win;
         gameStatusText.classList.add("bg-[#DDEB9D]/70", "text-[#143D60]", "font-bold", "text-xl");
         gameStatusText.classList.remove("bg-red-200/70", "text-red-800");
     } else {
-        gameStatusText.textContent = `😔 Game Over! The word was "${currentWord}".`;
+        gameStatusText.textContent = `${uiText.lose} "${currentWord}".`;
         gameStatusText.classList.add("bg-red-200/70", "text-red-800", "font-bold", "text-xl");
         gameStatusText.classList.remove("bg-[#DDEB9D]/70", "text-[#143D60]");
 
@@ -216,6 +238,19 @@ function endGame(isWin) {
 }
 
 // Event Listeners
+
+// Language selection
+languageButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        const language = button.getAttribute("data-language");
+        setGameLanguage(language);
+    });
+});
+
+// Back to language selection button
+backToLanguageButton.addEventListener("click", () => {
+    showGameState("language");
+});
 
 // Category selection
 categoryButtons.forEach(button => {
