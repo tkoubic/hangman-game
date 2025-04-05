@@ -227,9 +227,22 @@ function handleLetterGuess(button, clickedLetter) {
         livesRemaining--;
 
         // Update hangman image
-        const imageNumber = livesRemaining + 1; // Images are numbered 1-7
-        hangmanImage.src = `assets/hangman0${imageNumber}.jpg`;
-        hangmanImage.alt = `hangman0${imageNumber}`;
+        // For expert mode (12 lives), only start changing image after 6 mistakes
+        if (selectedDifficulty === "expert") {
+            // Calculate image number: start changing from hangman07 after 6 mistakes
+            // When livesRemaining is 6, we want image 7
+            // When livesRemaining is 5, we want image 6, etc.
+            if (livesRemaining <= 6) {
+                const imageNumber = livesRemaining + 1; // Images are numbered 1-7
+                hangmanImage.src = `assets/hangman0${imageNumber}.jpg`;
+                hangmanImage.alt = `hangman0${imageNumber}`;
+            }
+        } else {
+            // Normal mode - update image with each mistake
+            const imageNumber = livesRemaining + 1; // Images are numbered 1-7
+            hangmanImage.src = `assets/hangman0${imageNumber}.jpg`;
+            hangmanImage.alt = `hangman0${imageNumber}`;
+        }
 
         // Check if player lost
         if (livesRemaining === 0) {
