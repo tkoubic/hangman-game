@@ -7,10 +7,13 @@ const categoryButtons = document.querySelectorAll(".category-btn");
 const gameStatusText = document.querySelector(".game-status div");
 const restartButton = document.querySelector(".restart-btn");
 const languageButtons = document.querySelectorAll(".language-btn");
+const difficultyButtons = document.querySelectorAll(".difficulty-btn");
 const backToLanguageButton = document.getElementById("back-to-language-btn");
+const backToDifficultyButton = document.getElementById("back-to-difficulty-btn");
 
 // Game States
 const languageSelectState = document.getElementById("language-select");
+const difficultySelectState = document.getElementById("difficulty-select");
 const gameStartState = document.getElementById("game-start");
 const gamePlayState = document.getElementById("game-play");
 const gameEndState = document.getElementById("game-end");
@@ -19,10 +22,11 @@ const gameEndState = document.getElementById("game-end");
 let currentWord = "";
 let currentHint = "";
 let selectedCategory = "";
+let selectedDifficulty = "intermediate";
 let livesRemaining = 6;
 let correctLetters = [];
 let gameInProgress = false;
-const maxLives = 6;
+let maxLives = 6; // This can change based on difficulty
 
 // Initialize the game with language selection
 function initializeGame() {
@@ -53,6 +57,8 @@ function showGameState(state) {
     // Hide all states first
     languageSelectState.classList.remove("active");
     languageSelectState.classList.add("hidden");
+    difficultySelectState.classList.remove("active");
+    difficultySelectState.classList.add("hidden");
     gameStartState.classList.remove("active");
     gameStartState.classList.add("hidden");
     gamePlayState.classList.add("hidden");
@@ -62,6 +68,9 @@ function showGameState(state) {
     if (state === "language") {
         languageSelectState.classList.remove("hidden");
         languageSelectState.classList.add("active");
+    } else if (state === "difficulty") {
+        difficultySelectState.classList.remove("hidden");
+        difficultySelectState.classList.add("active");
     } else if (state === "start") {
         gameStartState.classList.remove("hidden");
         gameStartState.classList.add("active");
@@ -92,6 +101,25 @@ function setGameLanguage(lang) {
     // Call the setLanguage function from words.js
     setLanguage(lang);
 
+    // Show difficulty selection screen
+    showGameState("difficulty");
+}
+
+// Set the game difficulty
+function setGameDifficulty(difficulty) {
+    selectedDifficulty = difficulty;
+
+    // Set max lives based on difficulty
+    if (difficulty === "expert") {
+        maxLives = 12;
+    } else {
+        maxLives = 6;
+    }
+
+    // Update lives display
+    livesRemaining = maxLives;
+    livesElement.innerText = `${livesRemaining} / ${maxLives}`;
+
     // Show category selection screen
     showGameState("start");
 }
@@ -100,10 +128,12 @@ function setGameLanguage(lang) {
 function startGame(category) {
     // Set the selected category and update word list
     selectedCategory = category;
-    wordList = categories[category] || [];
+
+    // Get words based on difficulty and category
+    wordList = categories[selectedDifficulty][category] || [];
 
     if (wordList.length === 0) {
-        console.error("No words found for the selected category");
+        console.error(`No words found for category ${category} with difficulty ${selectedDifficulty}`);
         return;
     }
 
@@ -114,10 +144,18 @@ function startGame(category) {
     // Set current word and hint
     currentWord = wordData.word;
     currentHint = wordData.hint;
-    console.log(`Word: ${currentWord}, Category: ${selectedCategory}, Language: ${currentLanguage}`);
+    console.log(`Word: ${currentWord}, Category: ${selectedCategory}, Difficulty: ${selectedDifficulty}, Language: ${currentLanguage}`);
 
-    // Display hint
-    document.querySelector(".hint-text").innerText = currentHint;
+    // Display hint (or not, based on difficulty)
+    const hintSection = document.querySelector(".hint-section");
+    if (selectedDifficulty === "expert") {
+        // Hide hint for expert mode
+        hintSection.classList.add("hidden");
+    } else {
+        // Show hint for other difficulties
+        hintSection.classList.remove("hidden");
+        document.querySelector(".hint-text").innerText = currentHint || "";
+    }
 
     // Create word display
     displayWords.innerHTML = currentWord.split("").map(() =>
@@ -131,7 +169,7 @@ function startGame(category) {
     createKeyboard();
 
     // Reset game variables
-    livesRemaining = 6;
+    livesRemaining = maxLives; // Use the maxLives based on difficulty
     correctLetters = [];
     gameInProgress = true;
     livesElement.innerText = `${livesRemaining} / ${maxLives}`;
@@ -247,9 +285,22 @@ languageButtons.forEach(button => {
     });
 });
 
+// Difficulty selection
+difficultyButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        const difficulty = button.getAttribute("data-difficulty");
+        setGameDifficulty(difficulty);
+    });
+});
+
 // Back to language selection button
 backToLanguageButton.addEventListener("click", () => {
     showGameState("language");
+});
+
+// Back to difficulty selection button
+backToDifficultyButton.addEventListener("click", () => {
+    showGameState("difficulty");
 });
 
 // Category selection
